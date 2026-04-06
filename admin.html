@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Vijji Recipe Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f5f5;
+            padding: 2rem;
+        }
+        
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .admin-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .form-section, .recipes-list {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .form-section h2, .recipes-list h2 {
+            margin-bottom: 1rem;
+            color: #e67e22;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-family: inherit;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .btn {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+        }
+        
+        .btn-success {
+            background: #27ae60;
+        }
+        
+        .recipe-table {
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .action-btn {
+            padding: 0.3rem 0.6rem;
+            margin: 0 0.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .export-section {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="admin-container">
+    <div class="admin-header">
+        <h1><i class="fas fa-crown"></i> Vijji Recipe Admin Panel</h1>
+        <a href="index.html" style="color: white; text-decoration: none;">← Back to Site</a>
+    </div>
+    
+    <div class="stats-grid" id="statsGrid"></div>
+    
+    <div class="form-section">
+        <h2><i class="fas fa-plus-circle"></i> Add New Recipe</h2>
+        <form id="addRecipeForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Recipe Name *</label>
+                    <input type="text" id="recipeName" required>
+                </div>
+                <div class="form-group">
+                    <label>Country *</label>
+                    <input type="text" id="recipeCountry" required>
+                </div>
+                <div class="form-group">
+                    <label>Region *</label>
+                    <select id="recipeRegion">
+                        <option value="south-asia">South Asia</option>
+                        <option value="east-asia">East Asia</option>
+                        <option value="southeast-asia">Southeast Asia</option>
+                        <option value="middle-east">Middle East</option>
+                        <option value="europe">Europe</option>
+                        <option value="latin-america">Latin America</option>
+                        <option value="north-america">North America</option>
+                        <option value="africa">Africa</option>
+                        <option value="oceania">Oceania</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Cuisine *</label>
+                    <input type="text" id="recipeCuisine" required>
+                </div>
+                <div class="form-group">
+                    <label>Complexity (1-5) *</label>
+                    <input type="number" id="recipeComplexity" min="1" max="5" value="3" required>
+                </div>
+                <div class="form-group">
+                    <label>Price (₹) *</label>
+                    <input type="number" id="recipePrice" min="1" max="5" value="3" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Prep Time</label>
+                    <input type="text" id="recipePrepTime" value="15 mins">
+                </div>
+                <div class="form-group">
+                    <label>Cook Time</label>
+                    <input type="text" id="recipeCookTime" value="20 mins">
+                </div>
+                <div class="form-group">
+                    <label>Default Servings</label>
+                    <input type="number" id="recipeServings" value="4">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Ingredients (comma separated) *</label>
+                <textarea id="recipeIngredients" rows="3" placeholder="e.g., Chicken 500g, Butter 50g, Cream 100ml" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Image URL</label>
+                <input type="text" id="recipeImage" placeholder="https://...">
+            </div>
+            <button type="submit" class="btn"><i class="fas fa-save"></i> Add Recipe</button>
+        </form>
+    </div>
+    
+    <div class="recipes-list">
+        <h2><i class="fas fa-list"></i> All Recipes</h2>
+        <div class="export-section">
+            <button class="btn btn-success" onclick="exportToCSV()"><i class="fas fa-download"></i> Export to CSV</button>
+            <button class="btn" onclick="loadRecipes()"><i class="fas fa-sync"></i> Refresh</button>
+        </div>
+        <div class="recipe-table" id="recipesTable"></div>
+    </div>
+</div>
+
+<script>
+    let recipes = [];
+    
+    function loadRecipes() {
+        const saved = localStorage.getItem('vijji_recipes_admin');
+        if (saved) {
+            recipes = JSON.parse(saved);
+        } else {
+            // Default recipes
+            recipes = [
+                { id: "butter_chicken", name: "Butter Chicken", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 1, price: 1, ingredients: ["Chicken 500g", "Butter 50g", "Cream 100ml"], prepTime: "20 mins", cookTime: "30 mins", servings: 4, image: "https://image2url.com/r2/default/images/1774632989667-795b95e2-47d5-46d1-bbe0-db37a1c9a354.png" },
+                { id: "biryani", name: "Hyderabadi Biryani", country: "India", region: "south-asia", cuisine: "Hyderabadi", complexity: 1, price: 1, ingredients: ["Rice 500g", "Chicken 600g", "Spices"], prepTime: "40 mins", cookTime: "45 mins", servings: 6, image: "https://image2url.com/r2/default/images/1774633045562-2b99e0c6-1f00-4106-9774-22bc377f33b4.png" },
+                {id: "gulab_jamun", name: "Gulab Jamun", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 1, price: 1, ingredients: ["Milk solids 200g", "Sugar 250g", "Rose water 1 tsp", "Cardamom 2 pcs"], prepTime: "15 mins", cookTime: "25 mins", servings: 4, image:"https://image2url.com/r2/default/images/1774700129906-3f5fb231-cb65-43d2-b7ed-58100187bd7e.png"},
+                {id: "ras_malai", name: "Ras Malai", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 3, price: 2, ingredients: ["Paneer 200g", "Sugar 150g", "Milk 1L", "Saffron strands", "Pistachios"], prepTime: "30 mins", cookTime: "40 mins", servings: 4, image:"https://image2url.com/r2/default/images/1774703011065-06293a7c-e2a5-43a2-9ca4-aad0aee7fcf6.png"},
+                {id: "jalebi", name: "Jalebi", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 2, price: 1, ingredients: ["Maida 200g", "Yogurt 2 tbsp", "Sugar 200g", "Saffron", "Ghee for frying"], prepTime: "12 hours", cookTime: "30 mins", servings: 4, image:"https://image2url.com/r2/default/images/1774703128216-5f3b77e0-2549-458f-a4d2-99d6a980d760.png"},
+                {id: "samosa", name: "Samosa", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 2, price: 1, ingredients: ["Maida 200g", "Potatoes 300g", "Peas 100g", "Cumin seeds", "Oil for frying"], prepTime: "30 mins", cookTime: "25 mins", servings: 6, image:"https://image2url.com/r2/default/images/1774703254768-b34d7cc5-e61d-4761-a2b7-16dcd86f948b.png"},
+                {id: "idli", name: "Idli", country: "India", region: "south-asia", cuisine: "South Indian", complexity: 2, price: 1, ingredients: ["Rice 200g", "Urad dal 100g", "Fenugreek seeds", "Salt", "Water"], prepTime: "8 hours", cookTime: "10 mins", servings: 4, image:" https://image2url.com/r2/default/images/1774703352141-d03221ad-dbc1-4093-8a6f-b9a58a3209bb.png"},
+                {id: "dosa", name: "Dosa", country: "India", region: "south-asia", cuisine: "South Indian", complexity: 2, price: 1, ingredients: ["Rice 250g", "Urad dal 75g", "Fenugreek", "Salt", "Oil"], prepTime: "8 hours", cookTime: "5 mins", servings: 6, image:"https://image2url.com/r2/default/images/1774703436407-06d7996a-a691-4ece-bfa7-3519d7aa493f.png"},
+                {id: "dhokla", name: "Dhokla", country: "India", region: "south-asia", cuisine: "Gujarati", complexity: 2, price: 1, ingredients: ["Besan 200g", "Yogurt 100g", "Turmeric", "Eno fruit salt", "Mustard seeds"], prepTime: "10 mins", cookTime: "15 mins", servings: 4, image:"https://image2url.com/r2/default/images/1774703511906-0eb0da61-a533-432b-a3d2-19dafec5fd65.png"},
+                {id: "vada_pav", name: "Vada Pav", country: "India", region: "south-asia", cuisine: "Maharashtrian", complexity: 2, price: 1, ingredients: ["Potatoes 300g", "Besan 100g", "Pav buns 4", "Garlic chutney", "Green chili"], prepTime: "20 mins", cookTime: "20 mins", servings: 4, image:"https://image2url.com/r2/default/images/1774703578660-bbd804a8-0841-409e-a641-3baea7931fcf.png"},
+                {id: "misal_pav", name: "Misal Pav", country: "India", region: "south-asia", cuisine: "Maharashtrian", complexity: 3, price: 1, ingredients: ["Sprouts 200g", "Pav 4", "Farsan", "Onion", "Spicy gravy"], prepTime: "20 mins", cookTime: "30 mins", servings: 4, image:"https://image2url.com/r2/default/images/1774703662585-5ef1cf8b-28b2-4e48-9864-a6c1e61e21a9.png"},
+                {id: "pithla_bhakri", name: "Pithla Bhakri", country: "India", region: "south-asia", cuisine: "Maharashtrian", complexity: 1, price: 1, ingredients: ["Besan 100g", "Jowar flour 200g", "Onion", "Green chili", "Turmeric"], prepTime: "15 mins", cookTime: "25 mins", servings: 4, image:"https://image2url.com/r2/default/images/1774703788010-f70a4127-a5a7-45cb-a8da-0c173e272733.png"},
+                {id: "sabudana_khichadi", name: "Sabudana Khichadi", country: "India", region: "south-asia", cuisine: "Maharashtrian", complexity: 1, price: 1, ingredients: ["Sabudana 200g", "Peanuts 50g", "Potato 1", "Green chili", "Lemon"], prepTime: "4 hours", cookTime: "15 mins", servings: 3, image:"https://image2url.com/r2/default/images/1774703869400-7af996e5-9f96-4068-ac21-e98c8bb8dfea.png"},
+                {id: "puran_poli", name: "Puran Poli", country: "India", region: "south-asia", cuisine: "Maharashtrian", complexity: 3, price: 1, ingredients: ["Chana dal 200g", "Jaggery 200g", "Wheat flour 200g", "Cardamom", "Ghee"], prepTime: "30 mins", cookTime: "30 mins", servings: 6}
+                {id: "modak", name: "Modak", country: "India", region: "south-asia", cuisine: "Maharashtrian", complexity: 3, price: 1, ingredients: ["Rice flour 200g", "Coconut 150g", "Jaggery 100g", "Cardamom", "Ghee"], prepTime: "30 mins", cookTime: "20 mins", servings: 8}
+                {id: "egg_rassa", name: "Egg Rassa", country: "India", region: "south-asia", cuisine: "Maharashtrian", complexity: 2, price: 1, ingredients: ["Eggs 4", "Onion 2", "Coconut", "Kolhapuri masala", "Oil"], prepTime: "15 mins", cookTime: "30 mins", servings: 4}
+                {id: "pani_puri", name: "Pani Puri", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 2, price: 1, ingredients: ["Sooji 100g", "Potato 200g", "Tamarind", "Mint", "Chaat masala"], prepTime: "30 mins", cookTime: "20 mins", servings: 4}
+                {id:  "green_chilli_pickle", name: "Green Chilli Pickle", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 1, price: 1, ingredients: ["Green chilies 200g", "Mustard oil", "Lemon juice", "Fenugreek seeds", "Turmeric"], prepTime: "15 mins", cookTime: "0 mins", servings: 20}
+                {id: "suji_ka_halwa", name: "Suji Ka Halwa", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 1, price: 1, ingredients: ["Sooji 100g", "Sugar 100g", "Ghee 50g", "Water 200ml", "Cashews"], prepTime: "5 mins", cookTime: "15 mins", servings: 3}
+                {id: "poha", name: "Poha", country: "India", region: "south-asia", cuisine: "Maharashtrian", complexity: 1, price: 1, ingredients: ["Poha 150g", "Onion 1", "Peanuts 30g", "Turmeric", "Lemon"], prepTime: "10 mins", cookTime: "10 mins", servings: 3}
+                {id: "chakli", name: "Chakli", country: "India", region: "south-asia", cuisine: "Maharashtrian", complexity: 2, price: 1, ingredients: ["Rice flour 200g", "Besan 50g", "Sesame seeds", "Butter", "Oil for frying"], prepTime: "20 mins", cookTime: "20 mins", servings: 6}
+                {id: "coconut_burfi", name: "Coconut Burfi", country: "India", region: "south-asia", cuisine: "South Indian", complexity: 1, price: 1, ingredients: ["Coconut 200g", "Condensed milk 200ml", "Cardamom powder", "Ghee"], prepTime: "10 mins", cookTime: "15 mins", servings: 8}
+                {id: "sabudana_vada", name: "Sabudana Vada", country: "India", region: "south-asia", cuisine: "Maharashtrian", complexity: 2, price: 1, ingredients: ["Sabudana 200g", "Potato 2", "Peanuts 50g", "Green chili", "Oil for frying"], prepTime: "4 hours", cookTime: "20 mins", servings: 4}
+                {id: "sarson_da_saag_makke_di_roti", name: "Sarson da Saag with Makke di Roti", country: "India", region: "south-asia", cuisine: "Punja", complexity: 3, price: 1, ingredients: ["Mustard greens 500g", "Spinach 200g", "Makki flour 300g", "Butter", "Ginger"], prepTime: "20 mins", cookTime: "40 mins", servings: 4}
+                {id: "dal_makhani", name: "Dal Makhani", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 2, price: 1, ingredients: ["Whole urad dal 200g", "Kidney beans 50g", "Butter 50g", "Cream 100ml", "Tomato puree"], prepTime: "8 hours", cookTime: "45 mins", servings: 4}
+                {id: "tandoori_chicken", name: "Tandoori Chicken", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 2, price: 2, ingredients: ["Chicken 600g", "Yogurt 150g", "Tandoori masala", "Lemon", "Red chili powder"], prepTime: "4 hours", cookTime: "25 mins", servings: 4}
+                {id: "stuffed_kulchas", name: "Stuffed Kulchas", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 2, price: 1, ingredients: ["Maida 300g", "Potato 200g", "Yogurt", "Poppy seeds", "Butter"], prepTime: "20 mins", cookTime: "15 mins", servings: 6}
+                {id: "lassi", name: "Lassi", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 1, price: 1, ingredients: ["Yogurt 500ml", "Sugar 50g", "Water", "Cardamom powder"], prepTime: "5 mins", cookTime: "0 mins", servings: 2}
+                {id: "palak_paneer", name: "Palak Paneer", country: "India", region: "south-asia", cuisine: "North Indian", complexity: 2, price: 1, ingredients: ["Spinach 500g", "Paneer 200g", "Cream 50ml", "Onion", "Garlic"], prepTime: "15 mins", cookTime: "25 mins", servings: 4}
+                {id: "appe", name: "Appe", country: "India", region: "south-asia", cuisine: "South Indian", complexity: 1, price: 1, ingredients: ["Idli batter 500ml", "Onion", "Green chili", "Mustard seeds"], prepTime: "10 mins", cookTime: "15 mins", servings: 4}
+                {id: "uttapam", name: "Uttapam", country: "India", region: "south-asia", cuisine: "South Indian", complexity: 1, price: 1, ingredients: ["Dosa batter 500ml", "Onion 1", "Tomato 1", "Green chili", "Oil"], prepTime: "5 mins", cookTime: "15 mins", servings: 4}
+                {id: "sambar", name: "Sambar", country: "India", region: "south-asia", cuisine: "South Indian", complexity: 2, price: 1, ingredients: ["Toor dal 150g", "Mixed vegetables 300g", "Sambar powder", "Tamarind", "Curry leaves"], prepTime: "15 mins", cookTime: "30 mins", servings: 6}
+                {id: "coq_au_vin", name: "Coq au Vin", country: "France", region: "western-europe", cuisine: "French", complexity: 3, price: 3, ingredients: ["Chicken 1kg", "Red wine 750ml", "Mushrooms 200g", "Lardons 150g", "Pearl onions"], prepTime: "20 mins", cookTime: "90 mins", servings: 6}
+                {id: "ratatouille", name: "Ratatouille", country: "France", region: "western-europe", cuisine: "French", complexity: 2, price: 1, ingredients: ["Eggplant 1", "Zucchini 2", "Bell peppers 2", "Tomatoes 4", "Herbes de Provence"], prepTime: "20 mins", cookTime: "45 mins", servings: 6}
+                {id: "beef_bourguignon", name: "Beef Bourguignon", country: "France", region: "western-europe", cuisine: "French", complexity: 3, price: 3, ingredients: ["Beef chuck 1kg", "Red wine 750ml", "Carrots 2", "Bacon 150g", "Pearl onions"], prepTime: "30 mins", cookTime: "180 mins", servings: 6}
+                {id: "croissant", name: "Croissant", country: "France", region: "western-europe", cuisine: "French", complexity: 4, price: 2, ingredients: ["Flour 500g", "Butter 250g", "Milk 200ml", "Sugar 50g", "Yeast"], prepTime: "12 hours", cookTime: "15 mins", servings: 12}
+                {id: "dim_sum", name: "Dim Sum", country: "China", region: "east-asia", cuisine: "Cantonese", complexity: 3, price: 2, ingredients: ["Pork 200g", "Shrimp 150g", "Wheat starch 200g", "Bamboo shoots", "Soy sauce"], prepTime: "45 mins", cookTime: "10 mins", servings: 6}
+                {id: "bao_buns", name: "Bao Buns", country: "China", region: "east-asia", cuisine: "Chinese", complexity: 2, price: 1, ingredients: ["Flour 300g", "Milk 150ml", "Sugar 30g", "Yeast", "Pork belly 300g"], prepTime: "90 mins", cookTime: "15 mins", servings: 8}
+                {id: "spicy_king_prawn", name: "Spicy King Prawn", country: "China", region: "east-asia", cuisine: "Szechuan", complexity: 2, price: 3, ingredients: ["King prawns 400g", "Garlic", "Chili oil", "Szechuan peppercorns", "Spring onions"], prepTime: "15 mins", cookTime: "10 mins", servings: 2}
+                {id: "sanpei_chicken", name: "Sanpei Chicken", country: "China", region: "east-asia", cuisine: "Hakka", complexity: 2, price: 2, ingredients: ["Chicken 500g", "Ginger", "Garlic", "Basil", "Soy sauce"], prepTime: "15 mins", cookTime: "20 mins", servings: 4}
+                {id: "wagyu_steak", name: "Wagyu Steak", country: "Japan", region: "east-asia", cuisine: "Japanese", complexity: 2, price: 4, ingredients: ["Wagyu beef 300g", "Salt", "Pepper", "Garlic", "Butter"], prepTime: "10 mins", cookTime: "10 mins", servings: 2}
+                {id: "honeyed_pork", name: "Honeyed Pork", country: "China", region: "east-asia", cuisine: "Cantonese", complexity: 2, price: 2, ingredients: ["Pork shoulder 500g", "Honey 100ml", "Hoisin sauce", "Soy sauce", "Five spice"], prepTime: "4 hours", cookTime: "30 mins", servings: 4}
+                {id: "hunan_sea_bass", name: "Hunan Sea Bass", country: "China", region: "east-asia", cuisine: "Hunan", complexity: 2, price: 3, ingredients: ["Sea bass 400g", "Chili beans", "Ginger", "Spring onions", "Soy sauce"], prepTime: "15 mins", cookTime: "12 mins", servings: 2}
+                {id: "sushi", name: "Sushi", country: "Japan", region: "east-asia", cuisine: "Japanese", complexity: 3, price: 3, ingredients: ["Sushi rice 300g", "Nori sheets", "Fresh fish 200g", "Cucumber", "Rice vinegar"], prepTime: "45 mins", cookTime: "20 mins", servings: 4}
+                {id: "ramen", name: "Ramen", country: "Japan", region: "east-asia", cuisine: "Japanese", complexity: 3, price: 2, ingredients: ["Ramen noodles 200g", "Pork broth 1L", "Chashu pork", "Soft boiled egg", "Nori"], prepTime: "20 mins", cookTime: "60 mins", servings: 2}
+                {id: "tempura", name: "Tempura", country: "Japan", region: "east-asia", cuisine: "Japanese", complexity: 2, price: 2, ingredients: ["Prawns 8", "Veg assortment", "Tempura flour 150g", "Ice water", "Oil for frying"], prepTime: "20 mins", cookTime: "15 mins", servings: 4}
+                {id: "takoyaki", name: "Takoyaki", country: "Japan", region: "east-asia", cuisine: "Japanese", complexity: 2, price: 1, ingredients: ["Octopus 100g", "Takoyaki flour 150g", "Green onion", "Takoyaki sauce", "Bonito flakes"], prepTime: "15 mins", cookTime: "15 mins", servings: 4}
+                {id: "misosoup", name: "Miso Soup", country: "Japan", region: "east-asia", cuisine: "Japanese", complexity: 1, price: 1, ingredients: ["Dashi 1L", "Miso paste 100g", "Tofu 100g", "Wakame seaweed", "Spring onion"], prepTime: "5 mins", cookTime: "10 mins", servings: 4}
+                {id: "yakitori", name: "Yakitori", country: "Japan", region: "east-asia", cuisine: "Japanese", complexity: 1, price: 2, ingredients: ["Chicken thigh 500g", "Negi leeks", "Soy sauce", "Mirin", "Sugar"], prepTime: "20 mins", cookTime: "15 mins", servings: 4}
+                {id: "okonomiyaki_pancakes", name: "Okonomiyaki", country: "Japan", region: "east-asia", cuisine: "Japanese", complexity: 2, price: 1, ingredients: ["Flour 150g", "Cabbage 200g", "Eggs 2", "Pork belly 100g", "Okonomiyaki sauce"], prepTime: "15 mins", cookTime: "15 mins", servings: 2}
+                {id: "kottu_roti", name: "Kottu Roti", country: "Sri Lanka", region: "south-asia", cuisine: "Sri Lankan", complexity: 2, price: 1, ingredients: ["Godhamba roti 3", "Vegetables 200g", "Eggs 2", "Curry powder", "Soy sauce"], prepTime: "15 mins", cookTime: "15 mins", servings: 2}
+                {id: "egg_hoppers", name: "Egg Hoppers", country: "Sri Lanka", region: "south-asia", cuisine: "Sri Lankan", complexity: 2, price: 1, ingredients: ["Rice flour 200g", "Coconut milk 200ml", "Yeast", "Eggs 4", "Sugar"], prepTime: "2 hours", cookTime: "15 mins", servings: 4}
+                {id: "spicy_pol_sambol", name: "Spicy Pol Sambol", country: "Sri Lanka", region: "south-asia", cuisine: "Sri Lankan", complexity: 1, price: 1, ingredients: ["Coconut 200g", "Red onion 1", "Red chili powder", "Lime", "Maldive fish"], prepTime: "10 mins", cookTime: "0 mins", servings: 6}
+                {id: "fish_curry", name: "Fish Curry", country: "Sri Lanka", region: "south-asia", cuisine: "Sri Lankan", complexity: 2, price: 2, ingredients: ["Fish steaks 500g", "Coconut milk 400ml", "Goraka", "Curry leaves", "Roasted curry powder"], prepTime: "15 mins", cookTime: "25 mins", servings: 4}
+                
+
+
+            }
+
+            ];
+            saveRecipes();
+        }
+        renderRecipes();
+        updateStats();
+    }
+    
+    function saveRecipes() {
+        localStorage.setItem('vijji_recipes_admin', JSON.stringify(recipes));
+    }
+    
+    function renderRecipes() {
+        const table = document.getElementById('recipesTable');
+        table.innerHTML = `
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Country</th><th>Cuisine</th><th>Price</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    ${recipes.map((r, i) => `
+                        <tr>
+                            <td>${r.name}</td>
+                            <td>${r.country}</td>
+                            <td>${r.cuisine}</td>
+                            <td>₹${r.price}</td>
+                            <td>
+                                <button class="action-btn" onclick="editRecipe(${i})"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn btn-danger" onclick="deleteRecipe(${i})"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    
+    function updateStats() {
+        const countries = [...new Set(recipes.map(r => r.country))];
+        const regions = [...new Set(recipes.map(r => r.region))];
+        document.getElementById('statsGrid').innerHTML = `
+            <div class="stat-card"><i class="fas fa-utensils"></i> <strong>${recipes.length}</strong> Recipes</div>
+            <div class="stat-card"><i class="fas fa-globe"></i> <strong>${countries.length}</strong> Countries</div>
+            <div class="stat-card"><i class="fas fa-map"></i> <strong>${regions.length}</strong> Regions</div>
+            <div class="stat-card"><i class="fas fa-rupee-sign"></i> <strong>₹${recipes.reduce((s, r) => s + r.price, 0)}</strong> Total Value</div>
+        `;
+    }
+    
+    document.getElementById('addRecipeForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newRecipe = {
+            id: document.getElementById('recipeName').value.toLowerCase().replace(/ /g, '_'),
+            name: document.getElementById('recipeName').value,
+            country: document.getElementById('recipeCountry').value,
+            region: document.getElementById('recipeRegion').value,
+            cuisine: document.getElementById('recipeCuisine').value,
+            complexity: parseInt(document.getElementById('recipeComplexity').value),
+            price: parseInt(document.getElementById('recipePrice').value),
+            ingredients: document.getElementById('recipeIngredients').value.split(',').map(i => i.trim()),
+            prepTime: document.getElementById('recipePrepTime').value,
+            cookTime: document.getElementById('recipeCookTime').value,
+            servings: parseInt(document.getElementById('recipeServings').value),
+            image: document.getElementById('recipeImage').value
+        };
+        recipes.push(newRecipe);
+        saveRecipes();
+        renderRecipes();
+        updateStats();
+        e.target.reset();
+        alert('Recipe added successfully!');
+    });
+    
+    function editRecipe(index) {
+        const r = recipes[index];
+        document.getElementById('recipeName').value = r.name;
+        document.getElementById('recipeCountry').value = r.country;
+        document.getElementById('recipeRegion').value = r.region;
+        document.getElementById('recipeCuisine').value = r.cuisine;
+        document.getElementById('recipeComplexity').value = r.complexity;
+        document.getElementById('recipePrice').value = r.price;
+        document.getElementById('recipeIngredients').value = r.ingredients.join(', ');
+        document.getElementById('recipePrepTime').value = r.prepTime;
+        document.getElementById('recipeCookTime').value = r.cookTime;
+        document.getElementById('recipeServings').value = r.servings;
+        document.getElementById('recipeImage').value = r.image || '';
+        recipes.splice(index, 1);
+        saveRecipes();
+        renderRecipes();
+        updateStats();
+    }
+    
+    function deleteRecipe(index) {
+        if (confirm('Delete this recipe?')) {
+            recipes.splice(index, 1);
+            saveRecipes();
+            renderRecipes();
+            updateStats();
+        }
+    }
+    
+    function exportToCSV() {
+        const headers = ['id', 'name', 'country', 'region', 'cuisine', 'complexity', 'price', 'ingredients', 'prepTime', 'cookTime', 'servings', 'image'];
+        const rows = recipes.map(r => [
+            r.id, r.name, r.country, r.region, r.cuisine, r.complexity, r.price,
+            r.ingredients.join(';'), r.prepTime, r.cookTime, r.servings, r.image
+        ]);
+        const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'vijji_recipes.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+    
+    loadRecipes();
+</script>
+</body>
+</html>

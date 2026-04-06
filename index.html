@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="Vijji - Worldwide All in one recipes manual. 74 countries, 26 regions, authentic recipes from ₹1 to . Buy individual recipes with 3-page manuals.">
+    <meta name="theme-color" content="#e67e22">
+    <title>Vijji - Worldwide All in one recipes manual | Authentic Recipes ₹1,₹2,₹3,₹4,₹5</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Razorpay SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div class="logo" onclick="showHome()">
+        <img src="https://image2url.com/r2/default/images/1774633147539-223cc2b4-4f12-49e1-a4b6-b78461dde15e.png" alt="Vijji Logo" class="logo-img">
+        <div class="logo-text">
+            <h1>Vijji</h1>
+            <p>Worldwide All in one recipes manual</p>
+        </div>
+    </div>
+    
+    <div class="language-selector">
+        <select id="languageSelect" onchange="changeLanguage()">
+            <option value="en">🇬🇧 English</option>
+            <option value="hi">🇮🇳 हिंदी</option>
+            <option value="mr">🇮🇳 मराठी</option>
+            <option value="ml">🇮🇳 മലയാളം</option>
+            <option value="gu">🇮🇳 ગુજરાતી</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="zh">🇨🇳 中文</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="ko">🇰🇷 한국어</option>
+            <option value="pt">🇧🇷 Português</option>
+        </select>
+    </div>
+    
+    <div id="authSection" class="auth-section">
+        <button class="login-btn" onclick="openLoginModal()"><i class="fas fa-user"></i> Login</button>
+    </div>
+</nav>
+
+<!-- Hero Section with Search -->
+<section class="hero">
+    <h2 id="heroTitle">Discover Recipes from 74 Countries</h2>
+    <p id="heroSubtitle">26 Global Regions | Authentic Recipes | ₹1 to ₹5 per recipe</p>
+    
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-bar" placeholder="Search by recipe name, cuisine, country, ingredient..." onkeyup="searchRecipes()">
+        <i class="fas fa-search search-icon" onclick="searchRecipes()"></i>
+    </div>
+    
+    <div class="stats">
+        <div class="stat-card"><i class="fas fa-globe"></i> <span id="countryCount">74</span> Countries</div>
+        <div class="stat-card"><i class="fas fa-map"></i> <span id="regionCount">26</span> Regions</div>
+        <div class="stat-card"><i class="fas fa-utensils"></i> <span id="recipeCount">0</span> Recipes</div>
+        <div class="stat-card"><i class="fas fa-file-pdf"></i> 3-Page Manual Each</div>
+    </div>
+</section>
+
+<!-- Results Section -->
+<section class="results-section">
+    <div id="regionsGrid" class="region-grid"></div>
+    <div id="recipesGrid" class="recipe-grid"></div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <p>© 2025 Vijji - Worldwide All in one recipes manual</p>
+    <p>74 Countries | 26 Global Regions | Authentic Recipes from ₹1 to ₹5</p>
+    <p>Each recipe includes detailed 3-page manual | Secure Razorpay Payment</p>
+</footer>
+
+<!-- Recipe Manual Modal -->
+<div id="recipeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Recipe Manual</h2>
+            <button class="close-modal" onclick="closeRecipeModal()">&times;</button>
+        </div>
+        <div id="manualPages" class="manual-pages"></div>
+    </div>
+</div>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal login-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-user-circle"></i> Welcome to Vijji</h2>
+            <button class="close-modal" onclick="closeLoginModal()">&times;</button>
+        </div>
+        <div class="login-form">
+            <input type="text" id="loginName" placeholder="Full Name" required>
+            <input type="email" id="loginEmail" placeholder="Email Address" required>
+            <input type="tel" id="loginPhone" placeholder="Phone Number" required>
+            <button class="buy-btn" onclick="loginUser()" style="margin-top: 1rem;">
+                <i class="fas fa-arrow-right"></i> Login / Sign Up
+            </button>
+            <p style="text-align: center; margin-top: 1rem; font-size: 0.75rem; color: #8b7a66;">
+                🔒 Login to purchase recipes and access your library
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
